@@ -1,0 +1,46 @@
+@layer starwind.layout {
+    :where(sw-aspect-ratio) {
+        display: block;
+        position: relative;
+
+        aspect-ratio: var(--sw-aspect-ratio, 16 / 9);
+
+        /* Default is to crop/clip like a "frame", but allow override */
+        overflow: var(--sw-aspect-overflow, hidden);
+    }
+
+    /* Prefer clip when supported (no scroll container, typically faster) */
+    @supports (overflow: clip) {
+        :where(sw-aspect-ratio) {
+            overflow: var(--sw-aspect-overflow, clip);
+        }
+    }
+
+    /*
+        Fill behavior:
+        - we assume sw-aspect-ratio is a "frame" with one primary child
+        - if multiple children are provided, they will overlap
+        - put captions outside the sw-aspect-ratio element
+    */
+    :where(sw-aspect-ratio) > :where(*) {
+        position: absolute;
+        inset: 0;
+    }
+
+    :where(sw-aspect-ratio) > :where(picture) {
+        display: block;
+    }
+
+    :where(sw-aspect-ratio) > :where(img, video, iframe),
+    :where(sw-aspect-ratio) > :where(picture) > :where(img) {
+        display: block;
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: var(--sw-aspect-fit, cover);
+        object-position: var(--sw-aspect-position, 50% 50%);
+    }
+
+    :where(sw-aspect-ratio) > :where(iframe) {
+        border: 0;
+    }
+}
